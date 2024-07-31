@@ -11,3 +11,4 @@ const firebaseConfig = {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const app = initializeApp(firebaseConfig);
+console.log(app.name);

@@ -50,6 +50,7 @@ const ContactForm: React.FC = () => {
     },
     validationSchema: contactSchema,
     onSubmit: (values: ContactFormType, { setSubmitting, resetForm }) => {
+      console.log(values);
       if (formRef.current) {
         emailjs
           .sendForm(
