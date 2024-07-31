@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Spinner, Stack, Text } from "@chakra-ui/react";
-import { selectUser } from "../redux/authSelector";
+import { selectUser } from "../redux/userSelector";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../types";
@@ -9,11 +9,9 @@ import Slider from "../components/Slider";
 import ProductsList from "../components/ProductsList";
 import { Product } from "../types";
 import Categories from "../components/Categories";
-import { selectCart } from "../redux/cartSelector";
+import ContactForm from "../components/ContactForm";
 
 const HomePage: React.FC = () => {
-  const cart = useSelector(selectCart);
-  console.log(cart);
   const user = useSelector((state: RootState) => selectUser(state));
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
@@ -21,7 +19,7 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user.authUser) {
+    if (!user.email) {
       navigate("/login");
     }
   }, [user, navigate]);
@@ -53,6 +51,7 @@ const HomePage: React.FC = () => {
         <>
           <ProductsList length={5} products={products} />
           <Categories />
+          <ContactForm />
         </>
       )}
     </Stack>

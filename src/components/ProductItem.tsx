@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   Stack,
@@ -23,6 +23,36 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
   const toast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [size, setSize] = useState<string | null>(null);
+
+  const handleChangeSize = (selectedSize: string) => {
+    setSize(selectedSize);
+  };
+
+  const handleAddToCart = () => {
+    if (!size) {
+      toast({
+        isClosable: true,
+        title: "Please Select The Size!",
+        status: "error",
+      });
+      return;
+    }
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        size,
+        image: product.image,
+      })
+    );
+    toast({
+      isClosable: true,
+      title: "Successfully Added To Cart!",
+      status: "success",
+    });
+  };
 
   const modifyTitle = (title: string, maxWords: number) => {
     const words = title.split(" ");
@@ -33,7 +63,6 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
   };
 
   const modifiedTitle = modifyTitle(product.title, 8);
-
   const modifiedDescription =
     product.description.length > 100
       ? product.description.substring(0, 100) + "..."
@@ -53,6 +82,21 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
         <Heading>{modifiedTitle}</Heading>
         <Text>{modifiedDescription}</Text>
       </Stack>
+      <Flex width="100%" gap="10px" alignItems="center" justifyContent="left">
+        {["S", "M", "L"].map((sizeOption) => (
+          <Button
+            key={sizeOption}
+            backgroundColor={size === sizeOption ? "#0096FF" : "none"}
+            color={size === sizeOption ? "white" : "black"}
+            _hover="none"
+            variant="ghost"
+            border="1px solid #ccc"
+            onClick={() => handleChangeSize(sizeOption)}
+          >
+            {sizeOption}
+          </Button>
+        ))}
+      </Flex>
       <Flex w="100%" alignItems="center" justifyContent="space-between">
         <Flex alignItems="center" justifyContent="space-between" gap="10px">
           <StarRating rating={product.rating.rate} />
@@ -60,21 +104,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
           <Text color="#ccc">({product.rating.count})</Text>
         </Flex>
         <Button
-          onClick={() => {
-            dispatch(
-              addToCart({
-                id: product.id,
-                name: product.title,
-                price: product.price,
-                image: product.image,
-              })
-            ),
-              toast({
-                isClosable: true,
-                title: "Successfully Added To Cart!",
-                status: "success",
-              });
-          }}
+          onClick={handleAddToCart}
           _hover={{ background: "#0096FF" }}
           backgroundColor="#0096FF"
         >

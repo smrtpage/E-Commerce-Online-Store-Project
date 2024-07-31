@@ -1,15 +1,14 @@
 // Types for User
 export interface UserState {
-  username: string;
+  email: string;
   password: string | number;
-  avatarImg: string;
-  authUser: boolean;
+  avatarUrl?: string;
+  id: string;
+  token: string;
 }
 
 export interface RootState {
-  auth: {
-    user: UserState;
-  };
+  user: UserState;
   cart: CartState;
 }
 
@@ -32,6 +31,7 @@ export interface CartItem {
   id: number;
   name: string;
   price: number;
+  size: string;
   image: string;
   amount: number;
   totalPrice: number;

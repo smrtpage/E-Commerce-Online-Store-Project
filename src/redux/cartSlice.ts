@@ -12,6 +12,7 @@ interface AddToCartPayload {
   name: string;
   price: number;
   image: string;
+  size: string;
 }
 
 export const cartSlice = createSlice({
@@ -31,6 +32,7 @@ export const cartSlice = createSlice({
           image: product.image,
           price: product.price,
           amount: 1,
+          size: product.size,
           totalPrice: product.price,
           name: product.name,
         };

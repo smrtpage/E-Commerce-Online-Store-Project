@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Stack,
   Divider,
@@ -7,6 +8,7 @@ import {
   Image,
   Button,
   Input,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +18,6 @@ import {
   removeItemFromCart,
   clearCart,
 } from "../redux/cartSlice";
-import React from "react";
 import { selectCart } from "../redux/cartSelector";
 import telegramIcon3D from "../assets/Telgram3dIcon.png";
 
@@ -40,38 +41,50 @@ const Cart: React.FC = () => {
     dispatch(decreaseItemAmount({ id: itemId }));
   };
 
+  const limitNameLength = (name: string, maxWords: number) => {
+    const words = name.split(" ");
+    if (words.length > maxWords) {
+      return words.slice(0, maxWords).join(" ") + " ...";
+    }
+    return name;
+  };
+
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   return (
     <Stack
       display="flex"
       w="100%"
-      h="100vh"
+      minH="100vh"
       alignItems="center"
       justifyContent="center"
+      padding="20px"
+      overflowX="hidden"
+      overflowY="auto"
     >
       <Stack
-        padding="50px"
         borderRadius="20px"
         border="1px solid #ccc"
-        className="CartWrapper"
-        maxW="1400px"
+        maxW="1100px"
+        padding="20px"
         alignItems="center"
         justifyContent="center"
+        backgroundColor="white"
+        boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
       >
         <Stack
           display="flex"
           flexDirection="column"
           alignItems="center"
           justifyContent="center"
-          padding="20px"
-          maxW="1100px"
-          className="ShoppingCart"
+          w="100%"
         >
           <Flex
             alignItems="center"
-            w="1100px"
-            p="20px 0"
+            w="100%"
             justifyContent="space-between"
-            className="ShoppingCartTop"
+            mb="20px"
+            flexDirection={isMobile ? "column" : "row"}
           >
             <Heading>Shopping Cart</Heading>
             <Flex alignItems="center" justifyContent="center" gap="20px">
@@ -95,7 +108,6 @@ const Cart: React.FC = () => {
                   Clear Cart
                 </Button>
               )}
-
               <Text fontSize="30px" fontWeight="bold">
                 {cart.totalAmount} Items
               </Text>
@@ -108,27 +120,45 @@ const Cart: React.FC = () => {
             alignItems="center"
             justifyContent="center"
             rowGap="40px"
-            p="20px 0"
-            className="ProductsDetails"
+            w="100%"
+            pt="20px"
           >
-            <Flex alignItems="center" w="1100px" justifyContent="space-between">
-              <Text width="200px" color="#ccc" fontSize="20px">
+            <Flex
+              alignItems="center"
+              w="100%"
+              justifyContent="space-between"
+              flexDirection={isMobile ? "column" : "row"}
+            >
+              <Text
+                width={isMobile ? "100%" : "200px"}
+                color="#ccc"
+                fontSize="20px"
+              >
                 PRODUCT
               </Text>
               <Text
-                paddingLeft="45px"
-                width="200px"
+                width={isMobile ? "100%" : "200px"}
                 color="#ccc"
                 fontSize="20px"
               >
                 QUANTITY
               </Text>
-              <Text width="200px" color="#ccc" fontSize="20px">
+              <Text
+                width={isMobile ? "100%" : "200px"}
+                color="#ccc"
+                fontSize="20px"
+              >
                 PRICE
               </Text>
               <Text
-                paddingLeft="35px"
-                width="200px"
+                width={isMobile ? "100%" : "200px"}
+                color="#ccc"
+                fontSize="20px"
+              >
+                SIZE
+              </Text>
+              <Text
+                width={isMobile ? "100%" : "200px"}
                 color="#ccc"
                 fontSize="20px"
               >
@@ -142,107 +172,83 @@ const Cart: React.FC = () => {
                 <Flex
                   key={index}
                   alignItems="center"
-                  rowGap="50px"
-                  w="1100px"
+                  w="100%"
                   justifyContent="space-between"
-                  className="ProductDetails"
+                  flexDirection={isMobile ? "column" : "row"}
                 >
                   <Flex
-                    w="200px"
-                    className="Product"
+                    w={isMobile ? "100%" : "200px"}
                     gap="20px"
                     justifyContent="center"
                     alignItems="center"
+                    flexDirection={isMobile ? "column" : "row"}
                   >
-                    <Image
-                      src={item.image}
-                      backgroundColor="blue"
-                      width="100px"
-                      height="100px"
-                    />
-                    <Flex
-                      flexDirection="column"
-                      justifyContent="center"
-                      rowGap="10px"
-                      alignItems="flex-start"
-                    >
-                      <Text
-                        fontSize="20px"
-                        fontWeight="600"
-                        className="ProductName"
-                      >
-                        {item.name}
-                      </Text>
-                    </Flex>
+                    <Image src={item.image} width="100px" height="100px" />
+                    <Text fontSize="20px" fontWeight="600">
+                      {limitNameLength(item.name, 5)}
+                    </Text>
                   </Flex>
 
                   <Flex
-                    w="200px"
+                    w={isMobile ? "100%" : "200px"}
                     gap="20px"
                     justifyContent="center"
                     alignItems="center"
-                    className="ProductQuantity"
+                    flexDirection={isMobile ? "column" : "row"}
                   >
                     <Button
                       onClick={() => handleDecrease(item.id)}
-                      marginBottom="10px"
                       fontSize="40px"
                       _hover={{ background: "none" }}
                       variant="ghost"
-                      display="flex"
-                      justifyContent="center"
-                      alignItems="center"
                       color="blue"
-                      className="ReduceBtn"
                     >
                       -
                     </Button>
                     <Input
                       type="number"
-                      width="30px"
-                      padding="10px"
-                      outline="none"
+                      width="50px"
                       value={item.amount}
-                      color="grey"
                       readOnly
                     />
                     <Button
                       onClick={() => handleIncrease(item.id)}
-                      marginBottom="10px"
                       fontSize="40px"
                       _hover={{ background: "none" }}
                       variant="ghost"
                       color="blue"
-                      className="AddBtn"
                     >
                       +
                     </Button>
                   </Flex>
 
-                  <Stack w="200px" className="PriceSection">
-                    <Text fontSize="20px" fontWeight="600">
-                      ${item.totalPrice.toFixed(2)}
-                    </Text>
-                  </Stack>
-
-                  <Stack
-                    w="200px"
-                    className="RemoveSection"
-                    alignItems="center"
-                    justifyContent="center"
+                  <Text
+                    w={isMobile ? "100%" : "200px"}
+                    fontSize="20px"
+                    fontWeight="600"
                   >
-                    <Button
-                      onClick={() => handleRemoveItem(item.id)}
-                      color="#fff"
-                      _hover="none"
-                      backgroundColor="red"
-                      leftIcon={<MdDelete />}
-                      className="remove-btn"
-                      h="40px"
-                    >
-                      Remove Item
-                    </Button>
-                  </Stack>
+                    ${item.totalPrice.toFixed(2)}
+                  </Text>
+
+                  <Text
+                    w={isMobile ? "100%" : "200px"}
+                    fontSize="20px"
+                    fontWeight="600"
+                  >
+                    {item.size}
+                  </Text>
+
+                  <Button
+                    _hover="none"
+                    onClick={() => handleRemoveItem(item.id)}
+                    color="#fff"
+                    backgroundColor="red"
+                    leftIcon={<MdDelete />}
+                    h="40px"
+                    w={isMobile ? "100%" : "auto"}
+                  >
+                    Remove Item
+                  </Button>
                 </Flex>
               ))
             )}
@@ -253,46 +259,42 @@ const Cart: React.FC = () => {
           padding="20px"
           justifyContent="space-between"
           alignItems="center"
-          className="OrderDetails"
           borderRadius="20px"
           backgroundColor="#E7E7E7"
-          border="none"
+          flexDirection={isMobile ? "column" : "row"}
         >
           <Stack
-            direction="row"
-            w="auto"
+            direction={isMobile ? "column" : "row"}
             display="flex"
             gap="20px"
             alignItems="center"
-            justifyContent="space-between"
+            justifyContent="center"
           >
             <Image
-              display="block"
               src={telegramIcon3D}
               alt="Telegram Icon"
               width="100px"
               height="100px"
             />
-            <Text fontSize="20px" w="400px" color="#292929">
-              If You Want To Order Goods, Please Join Our Buying Bot In
-              Telegram: Name... Lorem ipsum dolor sit amet consectetur
-              adipisicing elit.
+            <Text fontSize="20px" color="#292929" textAlign="center">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum,
+              iusto vero. Beatae accusamus corrupti obcaecati?
             </Text>
           </Stack>
 
           <Stack
-            w="50%"
+            w={isMobile ? "100%" : "50%"}
             display="flex"
             flexDirection="column"
             rowGap="20px"
             alignItems="center"
             justifyContent="center"
+            textAlign="center"
           >
             <Text fontSize="22px" fontWeight="600">
               TOTAL: ${cart.totalPrice.toFixed(2)}
             </Text>
             <Button
-              // onClick={handleCheckout}
               width="150px"
               _hover={{ backgroundColor: "#0096FF", transform: "scale(1.1)" }}
               backgroundColor="#0096FF"

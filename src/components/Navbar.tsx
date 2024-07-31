@@ -20,16 +20,18 @@ import {
 import { CiLogout } from "react-icons/ci";
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
-import { logout } from "../redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCart } from "../redux/cartSelector";
 import { IoIosMenu } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import "./Navbar.css";
+import { motion } from "framer-motion";
+import { deleteUser } from "../redux/userSlice";
+
+const MotionFlex = motion(Flex);
 
 interface NavbarProps {
   username: string;
-  avatarImg: string;
+  avatarImg?: string;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ username, avatarImg }) => {
@@ -39,36 +41,48 @@ const Navbar: React.FC<NavbarProps> = ({ username, avatarImg }) => {
   const dispatch = useDispatch();
   const { colorMode, toggleColorMode } = useColorMode();
 
+  const scrollToContact = () => {
+    const contactSection = document.getElementById("contact-us");
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <Flex
+    <MotionFlex
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ ease: "linear", duration: 1 }}
       position="sticky"
       top="0"
       zIndex="1000"
       padding="30px 50px"
       alignItems="center"
       justifyContent="space-between"
-      className="nav-wrapper"
       backgroundColor={colorMode === "light" ? "white" : "gray.800"}
     >
-      <Heading className="nav-heading">MULTI SHOP</Heading>
+      <Heading>MULTI SHOP</Heading>
 
       <Flex
         display={{ base: "none", lg: "flex" }}
         alignItems="center"
         justifyContent="center"
         gap="20px"
-        className="nav-links"
       >
         <Button onClick={() => navigate("/")} fontSize="20px" variant="ghost">
           Home
         </Button>
-        <Button fontSize="20px" variant="ghost">
+        <Button
+          onClick={() => navigate("/shop")}
+          fontSize="20px"
+          variant="ghost"
+        >
           Shop
         </Button>
         <Button fontSize="20px" variant="ghost">
           About
         </Button>
-        <Button fontSize="20px" variant="ghost">
+        <Button fontSize="20px" variant="ghost" onClick={scrollToContact}>
           Contact Us
         </Button>
       </Flex>
@@ -76,10 +90,10 @@ const Navbar: React.FC<NavbarProps> = ({ username, avatarImg }) => {
       <Flex alignItems="center" justifyContent="center" gap="20px">
         <Tooltip label="Logout" aria-label="Logout tooltip">
           <Button
-            className="logout-btn"
             variant="ghost"
-            onClick={() => dispatch(logout())}
+            onClick={() => dispatch(deleteUser())}
             leftIcon={<CiLogout fontSize="30px" />}
+            display={{ base: "none", lg: "flex" }}
           />
         </Tooltip>
         <Tooltip
@@ -87,10 +101,10 @@ const Navbar: React.FC<NavbarProps> = ({ username, avatarImg }) => {
           aria-label="Change Color Mode tooltip"
         >
           <Button
-            className="change-colormode-btn"
             onClick={toggleColorMode}
             height="50px"
             variant="ghost"
+            display={{ base: "none", lg: "flex" }}
           >
             {colorMode === "light" ? (
               <MdOutlineDarkMode fontSize="30px" />
@@ -133,11 +147,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, avatarImg }) => {
             <DrawerContent>
               <DrawerCloseButton />
               <DrawerHeader>Menu</DrawerHeader>
-              <DrawerBody
-                className="drawer"
-                alignItems="center"
-                justifyContent="center"
-              >
+              <DrawerBody alignItems="center" justifyContent="center">
                 <Stack
                   height="100%"
                   display="flex"
@@ -145,7 +155,6 @@ const Navbar: React.FC<NavbarProps> = ({ username, avatarImg }) => {
                   alignItems="center"
                   justifyContent="center"
                   rowGap="50px"
-                  className="nav-links"
                 >
                   <Button fontSize="25px" variant="ghost" onClick={onClose}>
                     Home
@@ -156,20 +165,33 @@ const Navbar: React.FC<NavbarProps> = ({ username, avatarImg }) => {
                   <Button fontSize="25px" variant="ghost" onClick={onClose}>
                     About
                   </Button>
-                  <Button fontSize="25px" variant="ghost" onClick={onClose}>
+                  <Button
+                    fontSize="25px"
+                    variant="ghost"
+                    onClick={() => {
+                      scrollToContact();
+                      onClose();
+                    }}
+                  >
                     Contact Us
+                  </Button>
+                  <Button
+                    fontSize="23px"
+                    variant="ghost"
+                    leftIcon={<CiLogout fontSize="40px" />}
+                    onClick={() => {
+                      dispatch(deleteUser());
+                      onClose();
+                    }}
+                  >
+                    Logout
                   </Button>
                 </Stack>
               </DrawerBody>
               <DrawerFooter display="flex" justifyContent="space-between">
-                <Button
-                  variant="ghost"
-                  leftIcon={<CiLogout fontSize="30px" />}
-                  onClick={() => {
-                    dispatch(logout());
-                    onClose();
-                  }}
-                ></Button>
+                <Button variant="outline" mr={3} onClick={onClose}>
+                  Close
+                </Button>
                 <Button
                   variant="ghost"
                   onClick={() => {
@@ -183,20 +205,12 @@ const Navbar: React.FC<NavbarProps> = ({ username, avatarImg }) => {
                     <MdOutlineLightMode fontSize="30px" />
                   )}
                 </Button>
-                <Button
-                  className="close-drawer-btn"
-                  variant="outline"
-                  mr={3}
-                  onClick={onClose}
-                >
-                  Close
-                </Button>
               </DrawerFooter>
             </DrawerContent>
           </Drawer>
         </Flex>
       </Flex>
-    </Flex>
+    </MotionFlex>
   );
 };
 

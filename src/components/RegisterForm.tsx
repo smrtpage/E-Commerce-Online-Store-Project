@@ -6,8 +6,7 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
 import InputField from "./InputField";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useAuth } from "../hooks/useAuth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const validationSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -15,24 +14,27 @@ const validationSchema = yup.object().shape({
     .string()
     .min(6, "Password too short")
     .required("Password is required"),
+  avatarUrl: yup.string().optional(),
 });
 
-const LoginForm: React.FC = () => {
+const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast();
   const auth = getAuth();
-  const { avatarUrl } = useAuth();
 
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
+      id: "",
+      token: "",
+      avatarUrl: "",
     },
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const userCredential = await signInWithEmailAndPassword(
+        const userCredential = await createUserWithEmailAndPassword(
           auth,
           values.email,
           values.password
@@ -42,21 +44,22 @@ const LoginForm: React.FC = () => {
 
         dispatch(
           setUser({
-            email: user.email,
+            email: values.email,
+            avatarUrl: values.avatarUrl,
+            password: values.password,
             id: user.uid,
-            avatarUrl,
             token,
           })
         );
         toast({
-          title: "Successfully Logged in!",
+          title: "Successfully Registered!",
           status: "success",
         });
         navigate("/");
       } catch (error) {
-        console.error("Error during login process:", error);
+        console.error("Error during registration:", error);
         toast({
-          title: "Login Failed",
+          title: "Registration Failed",
           description: "Wrong Credentials",
           status: "error",
         });
@@ -76,7 +79,7 @@ const LoginForm: React.FC = () => {
       justifyContent="center"
       rowGap="20px"
     >
-      <Heading>Login</Heading>
+      <Heading>Register</Heading>
       <form
         onSubmit={formik.handleSubmit}
         style={{
@@ -104,19 +107,27 @@ const LoginForm: React.FC = () => {
           meta={formik.getFieldMeta("password")}
           {...formik.getFieldProps("password")}
         />
+        <InputField
+          label="Avatar Image"
+          disabled={false}
+          placeholder="Put Your Avatar Image URL..."
+          required={false}
+          meta={formik.getFieldMeta("avatarUrl")}
+          {...formik.getFieldProps("avatarUrl")}
+        />
         <Button colorScheme="blue" type="submit" width="100%" marginTop="20px">
-          Login
+          Register
         </Button>
         <Text>
-          Don't Have An Account Yet?
+          Already Have An Account?
           <Text
             paddingRight="5px"
             color="blue"
             textDecoration="underline"
             as={Link}
-            to="/register"
+            to="/login"
           >
-            Register
+            Login
           </Text>
         </Text>
       </form>
@@ -124,4 +135,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

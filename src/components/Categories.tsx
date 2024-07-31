@@ -1,12 +1,19 @@
 import React from "react";
 import { Grid, GridItem, Image, Box, Text } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import ShoesCtgImg from "../assets/choes-category-img.jpg";
-import KidsCtgImg from "../assets/kids-category-img.jpg";
-import AccessoriesCtgImg from "../assets/acccesories-category-img.jpg";
+import JeweleryImg from "../assets/jewelery.jpg";
+import ElectronicsImg from "../assets/electronics.jpg";
 import MenCtgImg from "../assets/mens-category-img.jpg";
 import WomenCtgImg from "../assets/women-category-img.jpg";
 
 const Categories: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (category: string) => {
+    navigate(`/shop?category=${category}`);
+  };
+
   return (
     <Grid
       templateAreas={{
@@ -36,6 +43,7 @@ const Categories: React.FC = () => {
           cursor="pointer"
           position="relative"
           height="100%"
+          onClick={() => handleCategoryClick("women's clothing")}
         >
           <Image
             src={WomenCtgImg}
@@ -69,9 +77,10 @@ const Categories: React.FC = () => {
           transition="0.4s all ease"
           cursor="pointer"
           height="100%"
+          onClick={() => handleCategoryClick("jewelery")}
         >
           <Image
-            src={AccessoriesCtgImg}
+            src={JeweleryImg}
             alt="Accessories"
             objectFit="cover"
             w="100%"
@@ -88,7 +97,7 @@ const Categories: React.FC = () => {
             py={1}
             borderRadius="md"
           >
-            Accessories
+            Jewelery
           </Text>
         </Box>
       </GridItem>
@@ -102,6 +111,7 @@ const Categories: React.FC = () => {
           cursor="pointer"
           position="relative"
           height="100%"
+          onClick={() => handleCategoryClick("men's clothing")}
         >
           <Image
             src={MenCtgImg}
@@ -135,9 +145,10 @@ const Categories: React.FC = () => {
           cursor="pointer"
           position="relative"
           height="100%"
+          onClick={() => handleCategoryClick("electronics")}
         >
           <Image
-            src={KidsCtgImg}
+            src={ElectronicsImg}
             alt="Kids"
             objectFit="cover"
             w="100%"
@@ -154,7 +165,7 @@ const Categories: React.FC = () => {
             py={1}
             borderRadius="md"
           >
-            Kids
+            Electronics
           </Text>
         </Box>
       </GridItem>
@@ -168,6 +179,7 @@ const Categories: React.FC = () => {
           cursor="pointer"
           position="relative"
           height="100%"
+          onClick={() => handleCategoryClick("shoes")}
         >
           <Image
             src={ShoesCtgImg}
